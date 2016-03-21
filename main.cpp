@@ -36,7 +36,7 @@ int main() {
         }
     }
 
-    save_as_ppm(img, "test.ppm");
+    save_as_png(img, "test.png");
 
     return 0;
 }

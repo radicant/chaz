@@ -1,8 +1,12 @@
 #ifndef PPM_H
 #define PPM_H
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
 #include <stdio.h>
 #include <string.h>
+
+#include "extern/stb_image_write.h"
 #include "vec3.h"
 
 struct image {
@@ -43,6 +47,27 @@ void save_as_ppm(const image &img, const char *filename) {
     }
 
     fclose(fp);
+}
+
+void save_as_png(const image &img, const char *filename) {
+    uint8_t *rgb = new uint8_t[3 * img.width * img.height]; 
+
+    for (uint32_t i = 0; i < img.width * img.height; ++i) {
+        const vec3 &pixel = img.pixels[i];
+        assert(pixel.r >= 0.0 && pixel.r <= 1.0);
+        assert(pixel.g >= 0.0 && pixel.g <= 1.0);
+        assert(pixel.b >= 0.0 && pixel.b <= 1.0);
+        rgb[3 * i + 0] = static_cast<unsigned int>(255 * pixel.r);
+        rgb[3 * i + 1] = static_cast<unsigned int>(255 * pixel.g);
+        rgb[3 * i + 2] = static_cast<unsigned int>(255 * pixel.b);
+    }
+
+    // 3 = RGB pixels
+    if (!stbi_write_png(filename, img.width, img.height, 3, rgb, 0)) {
+        fprintf(stderr, "Error writing %s", filename);
+    }
+
+    delete [] rgb;
 }
 
 #endif
