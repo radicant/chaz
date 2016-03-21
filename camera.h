@@ -21,7 +21,7 @@ struct camera {
     ) 
     :   position(pos)
     {
-        const vec3 look = look_at - pos;
+        const vec3 look = normalize(look_at - pos);
         const vec3 r = normalize(cross(look, up));
         const vec3 u = normalize(cross(r, look));
 

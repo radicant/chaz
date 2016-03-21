@@ -6,11 +6,17 @@
 #include "image.h"
 #include "ray.h"
 
-int main() {
-    const uint32_t width = 640;
-    const uint32_t height = 480;
+#include <random>
+std::random_device rd;
+std::mt19937 generator(rd());
+std::uniform_real_distribution<float> rand_float(0, 1);
 
-    const vec3 cam_pos(0, 0, 5);
+int main() {
+    const uint32_t samples_per_pixel = 16;
+    const uint32_t width = 1280;
+    const uint32_t height = 720;
+
+    const vec3 cam_pos(0, 0, 25);
     const vec3 look_at(0, 0, -1);
     const vec3 up(0, 1, 0);
     camera cam(cam_pos, look_at, up, 90, (float)width / height);
@@ -23,16 +29,25 @@ int main() {
     vec3 *pixels = img.pixels;
     for (uint32_t y = 0; y < height; ++y) {
         for (uint32_t x = 0; x < width; ++x) {
-            const ray r = make_ray(cam, (float)x / width, (float)(height - y) / height);
+            
+            vec3 color(0, 0, 0);
+            for (uint32_t sample = 0; sample < samples_per_pixel; ++sample) {
+                const ray r = make_ray(
+                    cam, 
+                    (x + rand_float(generator)) / width, 
+                    (height - (y + rand_float(generator))) / height
+                );
 
-            vec3 hit;
-            vec3 normal;
-            if (intersect(s, r, &hit, &normal)) {
-                vec3 dir_light_color = fmaxf(0, dot(normal, -light_dir)) * vec3(1.0, 1.0, 1.0);
-                *pixels = saturate(ambient_color + dir_light_color);
+                vec3 hit;
+                vec3 normal;
+                if (intersect(s, r, &hit, &normal)) {
+                    vec3 dir_light_color = fmaxf(0, dot(normal, -light_dir)) * vec3(1.0, 1.0, 1.0);
+                    color += saturate(ambient_color + dir_light_color);
+                }
             }
 
-            ++pixels;
+            color /= samples_per_pixel;
+            *pixels++ = color;
         }
     }
 

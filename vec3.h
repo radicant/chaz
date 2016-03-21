@@ -39,6 +39,20 @@ struct vec3 {
         z *= f;
         return *this;
     }
+
+    vec3 &operator/=(float f) {
+        x /= f;
+        y /= f;
+        z /= f;
+        return *this;
+    }
+
+    vec3 &operator+=(const vec3 &v2) {
+        x += v2.x;
+        y += v2.y;
+        z += v2.z;
+        return *this;
+    }
 };
 
 vec3 operator*(float f, const vec3 &v) {
