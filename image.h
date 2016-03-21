@@ -3,6 +3,7 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -57,9 +58,9 @@ void save_as_png(const image &img, const char *filename) {
         assert(pixel.r >= 0.0 && pixel.r <= 1.0);
         assert(pixel.g >= 0.0 && pixel.g <= 1.0);
         assert(pixel.b >= 0.0 && pixel.b <= 1.0);
-        rgb[3 * i + 0] = static_cast<unsigned int>(255 * pixel.r);
-        rgb[3 * i + 1] = static_cast<unsigned int>(255 * pixel.g);
-        rgb[3 * i + 2] = static_cast<unsigned int>(255 * pixel.b);
+        rgb[3 * i + 0] = static_cast<unsigned int>(255.5 * pow(pixel.r, 1.0 / 2.2));
+        rgb[3 * i + 1] = static_cast<unsigned int>(255.5 * pow(pixel.g, 1.0 / 2.2));
+        rgb[3 * i + 2] = static_cast<unsigned int>(255.5 * pow(pixel.b, 1.0 / 2.2));
     }
 
     // 3 = RGB pixels
